@@ -50,7 +50,7 @@ resource "kubectl_manifest" "helm_release" {
         spec:
           chart: ${local.helm_chart_name}
           reconcileStrategy: ChartVersion
-          %{if var.chart_version != "latest" }
+          %{if var.chart_version != "latest"}
           version: ${var.chart_version}
           %{endif}
           sourceRef:
