@@ -14,7 +14,7 @@ resource "kubernetes_namespace" "this" {
 resource "kubectl_manifest" "helm_repo" {
   yaml_body = <<-YAML
     apiVersion: source.toolkit.fluxcd.io/v1beta2
-    kind: HelmRepository
+    kind: ${var.helm_repo_kind}
     metadata:
       name: ${var.name}
       namespace: ${local.namespace}
@@ -23,6 +23,9 @@ resource "kubectl_manifest" "helm_repo" {
       url: ${var.helm_repo_url}
       %{if var.helm_repo_type != null}
       type: ${var.helm_repo_type}
+      %{endif}
+      %{if var.helm_repo_additional_spec != null}
+      ${indent(2, var.helm_repo_additional_spec)}
       %{endif}
   YAML
 
@@ -47,8 +50,11 @@ resource "kubectl_manifest" "helm_release" {
         spec:
           chart: ${local.helm_chart_name}
           reconcileStrategy: ChartVersion
+          %{if var.chart_version != "latest" }
+          version: ${var.chart_version}
+          %{endif}
           sourceRef:
-            kind: HelmRepository
+            kind: ${var.helm_repo_kind}
             name: ${var.name}
             namespace: ${var.namespace}
       interval: ${var.refresh_interval}

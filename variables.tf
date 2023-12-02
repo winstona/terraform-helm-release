@@ -17,8 +17,21 @@ variable "helm_repo_type" {
   default = null
 }
 
+variable "helm_repo_kind" {
+  default = "HelmRepository"
+}
+
+variable "helm_repo_additional_spec" {
+  default = null
+}
+
+
 variable "helm_chart_name" {
   default = ""
+}
+
+variable "chart_version" {
+  default = "latest"
 }
 
 
